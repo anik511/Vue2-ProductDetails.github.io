@@ -27,7 +27,7 @@ Vue.component('product',{
     </div>
 
     <product-tabs class="product-tabs" :reviews="reviews"></product-tabs>
-    <Cart-list :cartList="cartList" ></Cart-list>
+    <Cart-list></Cart-list>
 
   </div>
   `,
@@ -46,26 +46,23 @@ Vue.component('product',{
       varients:[
         {
           varientId: 10,
-          varientColor: ' #4fc08d',
+          varientColor: 'Green',
           variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
           stock: 5,
-          name: 'Green Mamba'
         },
         {
           varientId: 20,
-          varientColor: '#596d85',
+          varientColor: 'Blue',
           variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg',
           stock: 2,
-          name: 'Blue leopard'
         }
       ],
       reviews: [],
-      cartList: this.cart,
     }
   },
   methods:{
     addToCart(){
-      this.$emit('cartupdate', this.varients[this.selector])
+      this.$emit('cartupdate', this.varients[this.selector].varientId)
     },
     removeToCart(){
       this.$emit('removecart', this.varients[this.selector].varientId)
@@ -222,9 +219,10 @@ Vue.component('product-tabs',{
 
 Vue.component('Cart-list',{
   props:{
-    cartList: {
-      type: Array,
-    }
+    // reviews: {
+    //   type: Array,
+    //   required: false
+    // }
   },
   template:`
     <div class="mr-new">
@@ -232,12 +230,12 @@ Vue.component('Cart-list',{
         <h1>Cart List</h1>
       </header>
       <section id="user-goal">
-        <p class="red" v-if="(cartList.length == 0)">
-          No item has been added yet
+        <p :class="{red: carts.length == 0}" v-if="(carts.length == 0)">
+          No goals have been added yet - please start adding some!
         </p>
         <ul v-else>
-          <li v-for="(cart, index) in cartList" :key="index" :style="{backgroundColor: cart.varientColor}">
-            {{cart.name}}
+          <li v-for="(cart, index) in carts" :key="index">
+            {{cart}}
           </li>
         </ul>
       </section>
@@ -246,7 +244,7 @@ Vue.component('Cart-list',{
   `,
   data(){
     return{
-      // carts:['Reviews', 'Make a Review'],
+      carts:['Reviews', 'Make a Review'],
     }
   }
 })
@@ -260,18 +258,16 @@ var app = new Vue({
     cart: [],
   },
   methods:{
-    updateCart(paylod){
-      this.cart.push(paylod);
+    updateCart(id){
+      this.cart.push(id);
       console.log(this.cart)
     },
     removeCart(id){
-      var index = this.cart.findIndex(x => x.varientId === id);
-      console.log('status', this.cart.findIndex(x => x.varientId === id));
-      if(this.cart.length!=0 && index != -1){
-         this.cart.splice(index,1)
-        
+      let index = this.cart.indexOf(id)
+      if(this.cart.length!=0 ){
+        this.cart.splice(index,1)
       }
-      // console.log(this.cart)
+      console.log(this.cart)
     }
   }
 })
